@@ -18,9 +18,7 @@ public class GraphicConveyor {
         Matrix4f t = AffineTransformations.translate(new Vector3f(translate.getX(), translate.getY(), translate.getZ()));
         Matrix4f r = AffineTransformations.rotate(rotate.getX(), rotate.getY(), rotate.getZ());
         Matrix4f s = AffineTransformations.scale(scale.getX(), scale.getY(), scale.getZ());
-        Matrix4f m = t.multiplyNew(r.multiplyNew(s));
-        m.transposition();
-        return m;
+        return t.multiplyNew(r.multiplyNew(s));
     }
 
     public static Matrix4f lookAt(Vector3f eye, Vector3f target) {

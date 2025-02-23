@@ -1,10 +1,9 @@
-package com.cgvsu.test;
+package com.cgvsu.testGraphica;
 
 import com.cgvsu.math.Matrix4f;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.math.Vector4f;
 import com.cgvsu.render_engine.AffineTransformations;
-import com.cgvsu.render_engine.GraphicConveyor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -54,7 +54,6 @@
                     SplitPane.resizableWithParent="false">
             <Canvas fx:id="canvas" height="896.0" onMouseClicked="#onClickCanvas" width="873.0"/>
         </AnchorPane>
-        <AnchorPane fx:id="rightPane" SplitPane.resizableWithParent="false"/>
         <ScrollPane prefHeight="200.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
             <VBox prefHeight="884.0" prefWidth="435.0" spacing="10.0">
                 <Accordion>
@@ -82,88 +81,68 @@
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" prefHeight="100.0"
                                               prefWidth="200.0">
-                                            <children>
-                                                <Label text="Y:  "/>
-                                                <TextField fx:id="textFieldScaleY"
-                                                           prefHeight="25.0" prefWidth="100.0"
-                                                           promptText="0.0" text="1"/>
-                                            </children>
+                                            <Label text="Y:  "/>
+                                            <TextField fx:id="textFieldScaleY"
+                                                       prefHeight="25.0" prefWidth="100.0"
+                                                       promptText="0.0" text="1"/>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" prefHeight="100.0"
                                               prefWidth="200.0">
-                                            <children>
-                                                <Label text="Z:  "/>
-                                                <TextField fx:id="textFieldScaleZ"
-                                                           prefHeight="25.0" prefWidth="100.0"
-                                                           promptText="0.0" text="1"/>
-                                            </children>
+                                            <Label text="Z:  "/>
+                                            <TextField fx:id="textFieldScaleZ"
+                                                       prefHeight="25.0" prefWidth="100.0"
+                                                       promptText="0.0" text="1"/>
                                         </HBox>
                                     </VBox>
                                     <VBox alignment="TOP_CENTER" prefHeight="200.0"
                                           prefWidth="140.0" spacing="5.0">
-                                        <children>
-                                            <Label text="Rotation"/>
-                                            <HBox alignment="CENTER_LEFT" prefHeight="100.0"
-                                                  prefWidth="200.0">
-                                                <children>
-                                                    <Label text="X:  "/>
-                                                    <TextField fx:id="textFieldRotationX"
-                                                               prefHeight="25.0" prefWidth="100.0"
-                                                               promptText="0.0" text="0"/>
-                                                </children>
-                                            </HBox>
-                                            <HBox alignment="CENTER_LEFT" prefHeight="100.0"
-                                                  prefWidth="200.0">
-                                                <children>
-                                                    <Label text="Y:  "/>
-                                                    <TextField fx:id="textFieldRotationY"
-                                                               prefHeight="25.0" prefWidth="100.0"
-                                                               promptText="0.0" text="0"/>
-                                                </children>
-                                            </HBox>
-                                            <HBox alignment="CENTER_LEFT" prefHeight="100.0"
-                                                  prefWidth="200.0">
-                                                <children>
-                                                    <Label text="Z:  "/>
-                                                    <TextField fx:id="textFieldRotationZ"
-                                                               prefHeight="25.0" prefWidth="100.0"
-                                                               promptText="0.0" text="0"/>
-                                                </children>
-                                            </HBox>
-                                        </children>
+                                        <Label text="Rotation"/>
+                                        <HBox alignment="CENTER_LEFT" prefHeight="100.0"
+                                              prefWidth="200.0">
+                                            <Label text="X:  "/>
+                                            <TextField fx:id="textFieldRotationX"
+                                                       prefHeight="25.0" prefWidth="100.0"
+                                                       promptText="0.0" text="0"/>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" prefHeight="100.0"
+                                              prefWidth="200.0">
+                                            <Label text="Y:  "/>
+                                            <TextField fx:id="textFieldRotationY"
+                                                       prefHeight="25.0" prefWidth="100.0"
+                                                       promptText="0.0" text="0"/>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" prefHeight="100.0"
+                                              prefWidth="200.0">
+                                            <Label text="Z:  "/>
+                                            <TextField fx:id="textFieldRotationZ"
+                                                       prefHeight="25.0" prefWidth="100.0"
+                                                       promptText="0.0" text="0"/>
+                                        </HBox>
                                     </VBox>
                                     <VBox alignment="TOP_CENTER" prefHeight="200.0"
                                           prefWidth="140.0" spacing="5.0">
-                                        <children>
-                                            <Label text="Translation"/>
-                                            <HBox alignment="CENTER_LEFT" prefHeight="100.0"
-                                                  prefWidth="200.0">
-                                                <children>
-                                                    <Label text="X:  "/>
-                                                    <TextField fx:id="textFieldTranslationX"
-                                                               prefHeight="25.0" prefWidth="100.0"
-                                                               promptText="0.0" text="0"/>
-                                                </children>
-                                            </HBox>
-                                            <HBox alignment="CENTER_LEFT" prefHeight="100.0"
-                                                  prefWidth="200.0">
-                                                <children>
-                                                    <Label text="Y:  "/>
-                                                    <TextField fx:id="textFieldTranslationY"
-                                                               prefHeight="25.0" prefWidth="100.0"
-                                                               promptText="0.0" text="0"/>
-                                                </children>
-                                            </HBox>
-                                            <HBox alignment="CENTER_LEFT" prefHeight="100.0"
-                                                  prefWidth="200.0">
-                                                <children>
-                                                    <Label text="Z:  "/>
-                                                    <TextField fx:id="textFieldTranslationZ"
-                                                               prefHeight="25.0" prefWidth="100.0"
-                                                               promptText="0.0" text="0"/>
-                                                </children>
-                                            </HBox>
-                                        </children>
+                                        <Label text="Translation"/>
+                                        <HBox alignment="CENTER_LEFT" prefHeight="100.0"
+                                              prefWidth="200.0">
+                                            <Label text="X:  "/>
+                                            <TextField fx:id="textFieldTranslationX"
+                                                       prefHeight="25.0" prefWidth="100.0"
+                                                       promptText="0.0" text="0"/>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" prefHeight="100.0"
+                                              prefWidth="200.0">
+                                            <Label text="Y:  "/>
+                                            <TextField fx:id="textFieldTranslationY"
+                                                       prefHeight="25.0" prefWidth="100.0"
+                                                       promptText="0.0" text="0"/>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" prefHeight="100.0"
+                                              prefWidth="200.0">
+                                            <Label text="Z:  "/>
+                                            <TextField fx:id="textFieldTranslationZ"
+                                                       prefHeight="25.0" prefWidth="100.0"
+                                                       promptText="0.0" text="0"/>
+                                        </HBox>
                                     </VBox>
                                 </HBox>
 

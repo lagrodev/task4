@@ -1,4 +1,4 @@
-package com.cgvsu.test;
+package com.cgvsu.testGraphica;
 
 import com.cgvsu.math.Matrix4f;
 import com.cgvsu.math.Vector3f;

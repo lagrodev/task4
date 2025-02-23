@@ -1,4 +1,4 @@
-package com.cgvsu.test;
+package com.cgvsu.testGraphica;
 
 import com.cgvsu.math.Matrix4f;
 import com.cgvsu.math.Vector3f;
@@ -40,7 +40,7 @@ public class translateRotateScaleTest {
                 0, 0, 1, 2,
                 0, 0, 0, 1
         });
-        translationMatrix.transposition();
+        
         
 
         assertMatrixEquals(resultMatrix, translationMatrix);
@@ -69,7 +69,7 @@ public class translateRotateScaleTest {
                 0, 0, 4, 0,
                 0, 0, 0, 1
         });
-        scalingMatrix.transposition();
+        
 
         
         assertMatrixEquals(resultMatrix, scalingMatrix);
@@ -118,7 +118,7 @@ public class translateRotateScaleTest {
                 0, 0, 0, 1
         };
 
-        Matrix4f expectedMatrix = new Matrix4f(expectedElements).transpositionNew();
+        Matrix4f expectedMatrix = new Matrix4f(expectedElements);
         
         assertMatrixEquals(resultMatrix, expectedMatrix);
     }
@@ -165,7 +165,7 @@ public class translateRotateScaleTest {
         Matrix4f expectedMatrix = new Matrix4f(T);
         expectedMatrix.multiply(R);
         expectedMatrix.multiply(S);
-        expectedMatrix.transposition();
+        
 
         assertMatrixEquals(resultMatrix, expectedMatrix);
 
@@ -227,7 +227,7 @@ public class translateRotateScaleTest {
                 0, 0, 0, 3,
                 0, 0, 0, 1
         });
-        expectedMatrix.transposition();
+        
         assertMatrixEquals(resultMatrix, expectedMatrix);
     }
 
@@ -246,7 +246,7 @@ public class translateRotateScaleTest {
                 0, 0, -3, 0,
                 0, 0, 0, 1
         });
-        expectedMatrix.transposition();
+        
         assertMatrixEquals(resultMatrix, expectedMatrix);
     }
 
@@ -278,7 +278,7 @@ public class translateRotateScaleTest {
         Matrix4f expectedMatrix = new Matrix4f(T);
         expectedMatrix.multiply(R);
         expectedMatrix.multiply(S);
-        expectedMatrix.transposition();
+        
 
         assertMatrixEquals(resultMatrix, expectedMatrix);
 
@@ -321,7 +321,7 @@ public class translateRotateScaleTest {
         Matrix4f expectedMatrix = new Matrix4f(T);
         expectedMatrix.multiply(R);
         expectedMatrix.multiply(S);
-        expectedMatrix.transposition();
+        
        
 
         assertMatrixEquals(resultMatrix, expectedMatrix);

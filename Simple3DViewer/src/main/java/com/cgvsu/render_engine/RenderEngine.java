@@ -19,9 +19,6 @@ public class RenderEngine {
             final Model mesh,
             final double width,
             final double height) {
-        Vector3f[] transformedVertices =
-                transformAllVertices(mesh,
-                        calculateModelViewProjectionMatrix(camera, mesh.getTranslate(), mesh.getRotate(), mesh.getScale()));
 
 
         final int nPolygons = mesh.polygons.size();
@@ -54,13 +51,5 @@ public class RenderEngine {
                         resultPoints.get(0).getX(),
                         resultPoints.get(0).getY());
         }
-    }
-
-    private static Vector3f[] transformAllVertices(Model model, Matrix4f mvpMatrix) {
-        Vector3f[] transformedVertices = new Vector3f[model.getVertices().size()];
-        for (int i = 0; i < model.getVertices().size(); i++) {
-            transformedVertices[i] = mvpMatrix.multiply3(new Vector4f(model.getVertices().get(i)));
-        }
-        return transformedVertices;
     }
 }
