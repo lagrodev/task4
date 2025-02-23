@@ -23,6 +23,14 @@ public class Vector4f extends AbstractVector {
         calcLength();
     }
 
+    public Vector4f(Vector3f vector3f) {
+        components[0] = vector3f.getX();
+        components[1] = vector3f.getY();
+        components[2] = vector3f.getZ();
+        components[3] = 1;
+    }
+
+
     public Vector4f normalizeV() {
         return (Vector4f) super.normalizeV();
     }

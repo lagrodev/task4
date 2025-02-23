@@ -2,6 +2,7 @@ package com.cgvsu;
 
 import com.cgvsu.math.Matrix4f;
 import com.cgvsu.math.Vector3f;
+import com.cgvsu.math.Vector4f;
 import com.cgvsu.model.Model;
 import com.cgvsu.objreader.ObjReader;
 import com.cgvsu.render_engine.Camera;
@@ -31,8 +32,8 @@ import static com.cgvsu.render_engine.RenderEngine.mainRender;
 public class GuiController {
 
     final private float TRANSLATION = 0.5F;
-    @FXML
-    private SplitPane splitPane;
+    public SplitPane splitPane;
+
     @FXML
     private Canvas canvas;
     @FXML
@@ -235,7 +236,7 @@ public class GuiController {
 
         ArrayList<Vector3f> transformedVertices = new ArrayList<>();
         for (Vector3f vertex : mesh.getVertices()) {
-            Vector3f transformedVertex = GraphicConveyor.multiplyMatrix4ByVector3(transformationMatrix, vertex);
+            Vector3f transformedVertex = transformationMatrix.multiply3(new Vector4f(vertex));
             transformedVertices.add(transformedVertex);
         }
 

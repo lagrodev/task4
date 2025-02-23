@@ -47,13 +47,14 @@
             </MenuItem>
         </Menu>
     </MenuBar>
-    <SplitPane fx:id="splitPane" dividerPositions="0.7" layoutX="2.0" layoutY="26.0" prefHeight="892.0"
+    <SplitPane fx:id="splitPane" dividerPositions="0.8" layoutX="2.0" layoutY="26.0" prefHeight="892.0"
                prefWidth="1311.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                AnchorPane.topAnchor="26.0">
         <AnchorPane fx:id="anchorPaneForCanvas" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0"
                     SplitPane.resizableWithParent="false">
             <Canvas fx:id="canvas" height="896.0" onMouseClicked="#onClickCanvas" width="873.0"/>
         </AnchorPane>
+        <AnchorPane fx:id="rightPane" SplitPane.resizableWithParent="false"/>
         <ScrollPane prefHeight="200.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
             <VBox prefHeight="884.0" prefWidth="435.0" spacing="10.0">
                 <Accordion>

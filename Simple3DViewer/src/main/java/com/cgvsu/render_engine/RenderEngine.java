@@ -3,6 +3,7 @@ package com.cgvsu.render_engine;
 import com.cgvsu.math.Matrix4f;
 import com.cgvsu.math.Vector2f;
 import com.cgvsu.math.Vector3f;
+import com.cgvsu.math.Vector4f;
 import com.cgvsu.model.Model;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -32,8 +33,9 @@ public class RenderEngine {
                 Vector3f vertex = mesh.vertices.get(mesh.polygons.get(polygonInd).getVertexIndices().get(vertexInPolygonInd));
 
                 Vector3f vector3f = new Vector3f(vertex.getX(), vertex.getY(), vertex.getZ());
-
-                Vector2f resultPoint = vertexToPoint(multiplyMatrix4ByVector3(calculateModelViewProjectionMatrix(camera, mesh.getTranslate(), mesh.getRotate(), mesh.getScale()), vector3f), (int) width, (int) height);
+                Vector2f resultPoint = vertexToPoint(calculateModelViewProjectionMatrix(
+                        camera, mesh.getTranslate(), mesh.getRotate(), mesh.getScale())
+                        .multiply3(new Vector4f(vector3f)), (int) width, (int) height);
                 resultPoints.add(resultPoint);
             }
 
@@ -57,7 +59,7 @@ public class RenderEngine {
     private static Vector3f[] transformAllVertices(Model model, Matrix4f mvpMatrix) {
         Vector3f[] transformedVertices = new Vector3f[model.getVertices().size()];
         for (int i = 0; i < model.getVertices().size(); i++) {
-            transformedVertices[i] = GraphicConveyor.multiplyMatrix4ByVector3(mvpMatrix, model.getVertices().get(i));
+            transformedVertices[i] = mvpMatrix.multiply3(new Vector4f(model.getVertices().get(i)));
         }
         return transformedVertices;
     }

@@ -1,7 +1,10 @@
 package com.cgvsu.render_engine;
 
 
-import com.cgvsu.math.*;
+import com.cgvsu.math.Matrix4f;
+import com.cgvsu.math.Vector2f;
+import com.cgvsu.math.Vector3f;
+import javafx.beans.NamedArg;
 
 import static java.lang.Math.tan;
 
@@ -11,7 +14,7 @@ public class GraphicConveyor {
      * Аффинные преобразования.
      * @return {@code Matrix4f} - матрица из локальной системы координат в мировую
      */
-    public static Matrix4f translateRotateScale( Vector3f translate, Vector3f rotate, Vector3f scale) {
+    public static Matrix4f translateRotateScale(@NamedArg("translate") Vector3f translate, @NamedArg("rotate") Vector3f rotate, @NamedArg("scale") Vector3f scale) {
         Matrix4f t = AffineTransformations.translate(new Vector3f(translate.getX(), translate.getY(), translate.getZ()));
         Matrix4f r = AffineTransformations.rotate(rotate.getX(), rotate.getY(), rotate.getZ());
         Matrix4f s = AffineTransformations.scale(scale.getX(), scale.getY(), scale.getZ());
@@ -47,6 +50,7 @@ public class GraphicConveyor {
 
         return new Matrix4f(matrix);
     }
+
     /**
      * Матрица перспективы. я хз что с ней делать, вроде как, ее косенко писал, писал и дописал нормально... но она не такая же, как в методичке, но всем работает... делаем вывод: или я обосрался, или чет да
      *
@@ -72,20 +76,6 @@ public class GraphicConveyor {
         matrix4f.transposition();
         return matrix4f;
     }
-
-    /**
-     * Получаем последний вектор нормализованный вектор v для трансформации вершины и отображения последней на экране
-     *
-     * @param matrix P*V*M
-     * @param vertex вектор
-     * @return {@code Vector3f} - нормализованный конечный вектор (скорее всего, нормаль к вершине).
-     */
-    public static Vector3f multiplyMatrix4ByVector3(final Matrix4f matrix, final Vector3f vertex) {
-        Vector4f res = matrix.multiply(new Vector4f(vertex.getX(), vertex.getY(), vertex.getZ(), 1));
-        float w = res.getW();
-        return new Vector3f(res.getX() / w, res.getY() / w, res.getZ() / w);
-    }
-
 
     public static Matrix4f calculateModelViewProjectionMatrix(Camera camera, Vector3f translate, Vector3f rotate, Vector3f scale) {
         Matrix4f modelMatrix = GraphicConveyor.translateRotateScale(translate, rotate, scale);

@@ -76,6 +76,13 @@ public class Matrix4f extends AbstractMatrix {
         return (Vector4f) super.multiply(other);
     }
 
+    public Vector3f multiply3(Vector4f other) {
+        Vector4f vector4f = (Vector4f) super.multiply(other);
+        vector4f.divide(vector4f.getW());
+        return new Vector3f(vector4f.getX(),vector4f.getY(),vector4f.getZ());
+    }
+
+
     @Override
     public void multiply(AbstractMatrix other) {
         super.multiply(other);

@@ -64,8 +64,6 @@ public class AffineTransformations {
      * @param vector3f вектор переноса
      * @return {@code Matrix4f} - матрица переноса
      */
-
-
     public static Matrix4f translate(Vector3f vector3f) {
         return calculateTranslate(new Vector4f(vector3f.getX(), vector3f.getY(), vector3f.getZ(), 1));
     }
@@ -87,7 +85,6 @@ public class AffineTransformations {
      * @param scaleZ растяжение по z
      * @return {@code Matrix4f} - матрица растяжения (по факту просто по главной диагонали будут стоять не 1, а растяжение наше)
      */
-
     public static Matrix4f scale(float scaleX, float scaleY, float scaleZ) {
         float[] scale = new float[]{scaleX, scaleY, scaleZ};
         return calculateScale(scale);
