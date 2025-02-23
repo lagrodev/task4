@@ -1,10 +1,13 @@
 package com.cgvsu;
 
 import com.cgvsu.math.Matrix4f;
+import com.cgvsu.math.Vector2f;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.math.Vector4f;
 import com.cgvsu.model.Model;
+import com.cgvsu.model.Polygon;
 import com.cgvsu.objreader.ObjReader;
+import com.cgvsu.objwriter.ObjWriter;
 import com.cgvsu.render_engine.Camera;
 import com.cgvsu.render_engine.GraphicConveyor;
 import javafx.animation.Animation;
@@ -13,9 +16,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Alert;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static com.cgvsu.render_engine.RenderEngine.mainRender;
 
@@ -33,6 +35,7 @@ public class GuiController {
 
     final private float TRANSLATION = 0.5F;
     public SplitPane splitPane;
+    public MenuItem menuItemSaveModel;
 
     @FXML
     private Canvas canvas;
@@ -118,8 +121,7 @@ public class GuiController {
 
     @FXML
     private void onOpenModelMenuItemClick() {
-        FileChooser fileChooser = createFileChooser("Model (*.obj)", "*.obj", "Load Model"); // это кнш не моя работа, но мне стало интересно, короче, чтобы сделать фильтр (выбор нескольких типов можно сделать такую конструкцию:
-        // fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("отбражеение имени" - description, "тип" - extension)
+        FileChooser fileChooser = createFileChooser("Model (*.obj)", "*.obj", "Load Model");
         fileChooser.setTitle("Load Model");
 
         File file = fileChooser.showOpenDialog((Stage) canvas.getScene().getWindow());
@@ -204,28 +206,17 @@ public class GuiController {
     }
 
 
-    private void showErrorAlert(String title, String header, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-
     @FXML
     public void recalculationOfNormals(ActionEvent actionEvent) {
         TransformationParameters params;
         try {
             params = parseParameters();
             if (!getVector3fs(params).get(1).positiveVector()) {
-                showErrorAlert("ERROR", "Incorrect data",
-                        "Make sure scale is greater than zero");
+
                 return;
             }
         } catch (NumberFormatException e) {
-            showErrorAlert("ERROR", "Incorrect data",
-                    "Make sure all fields contain numeric values");
+
             return;
         }
         recalculationOfNormals(getVector3fs(params));
@@ -235,7 +226,7 @@ public class GuiController {
         Matrix4f transformationMatrix = GraphicConveyor.translateRotateScale(list.get(2), list.get(0), list.get(1));
 
         ArrayList<Vector3f> transformedVertices = new ArrayList<>();
-        for (Vector3f vertex : mesh.getVertices()) {
+        for (Vector3f vertex : mesh.getOriginalVertices()) {
             Vector3f transformedVertex = transformationMatrix.multiply3(new Vector4f(vertex));
             transformedVertices.add(transformedVertex);
         }
@@ -244,5 +235,58 @@ public class GuiController {
         mesh.setNormals(NormalCalculator.calculateNormals(mesh));
 
         render();
+    }
+
+    public void saveModelFromFile() {
+        if (mesh == null) {
+
+            return;
+        }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Save Model");
+        alert.setHeaderText("Choose save option:");
+        alert.setContentText("Do you want to save the modified version or the original version?");
+
+        ButtonType buttonModified = new ButtonType("Save Modified");
+        ButtonType buttonOriginal = new ButtonType("Save Original");
+        ButtonType buttonCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(buttonModified, buttonOriginal, buttonCancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent() && result.get() == buttonModified) {
+            saveModels(false);
+        } else if (result.isPresent() && result.get() == buttonOriginal) {
+            saveModels(true);
+        }
+    }
+
+    private void saveModels(boolean useOriginalModel) {
+        ObjWriter objWriter = new ObjWriter();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Model");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("OBJ Files", "*.obj"));
+        File initialDirectory = new File("Saved models");
+        if (initialDirectory.exists()) {
+            fileChooser.setInitialDirectory(initialDirectory);
+        }
+            fileChooser.setInitialFileName("Model" + ".obj");
+            File file = fileChooser.showSaveDialog(null);
+
+            if (file != null) {
+                ArrayList<Vector3f> vertices = useOriginalModel ? mesh.getOriginalVertices() : mesh.getVertices();
+                ArrayList<Polygon> polygons = mesh.getPolygons();
+                ArrayList<Vector2f> textureVertices =  mesh.getTextureVertices();
+                ArrayList<Vector3f> normals = mesh.getNormals();
+                objWriter.writeModelToObjFile(
+                        file.getAbsolutePath(),
+                        vertices,
+                        textureVertices,
+                        normals,
+                        polygons
+                );
+            }
     }
 }

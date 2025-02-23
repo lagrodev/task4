@@ -13,6 +13,12 @@
                     <KeyCodeCombination alt="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" code="F"/>
                 </accelerator>
             </MenuItem>
+            <MenuItem fx:id="menuItemSaveModel" mnemonicParsing="false" onAction="#saveModelFromFile" text="Save model">
+                <accelerator>
+
+                    <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                </accelerator>
+            </MenuItem>
         </Menu>
         <Menu mnemonicParsing="false" text="Camera Options">
             <MenuItem mnemonicParsing="false" onAction="#handleCameraForward" text="Forward">
