@@ -1,8 +1,6 @@
-package com.cgvsu;
+package com.cgvsu.model;
 
 import com.cgvsu.math.Vector3f;
-import com.cgvsu.model.Model;
-import com.cgvsu.model.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +15,7 @@ public class NormalCalculator {
             normals.add(new Vector3f(0, 0, 0));
         }
 
-        for (Polygon polygon : polygons) {
+        for (Polygon polygon : polygons) { //берем вершины полигона, вычисляем нормаль и нормализуем
             List<Integer> vertexIndices = polygon.getVertexIndices();
             Vector3f v0 = vertices.get(vertexIndices.get(0));
             Vector3f v1 = vertices.get(vertexIndices.get(1));
@@ -28,13 +26,13 @@ public class NormalCalculator {
             Vector3f faceNormal = edge1.cross(edge2);
             faceNormal.normalize();
 
-            for (int index : vertexIndices) {
+            for (int index : vertexIndices) { // тута мы делаем нормали к вершинам (К её текущей нормали добавляется нормаль полигона)
                 Vector3f currentNormal = normals.get(index);
                 normals.set(index, currentNormal.add(faceNormal));
             }
         }
 
-        for (int i = 0; i < normals.size(); i++) {
+        for (int i = 0; i < normals.size(); i++) { //ласт нормализация, т.к. на пред. шаге мы гениально все просуммировали => надо ее привести красиво :)
             Vector3f normal = normals.get(i);
             normal.normalize();
             normals.set(i, normal);

@@ -1,7 +1,19 @@
 package com.cgvsu.render_engine;
-import com.cgvsu.math.*;
+
+import com.cgvsu.math.Matrix4f;
+import com.cgvsu.math.Vector3f;
 
 public class Camera {
+
+    private Vector3f position;
+    private Vector3f target;
+    private float fov;
+    private float aspectRatio;
+    private float nearPlane;
+    private float farPlane;
+    private float azimuth = 0.0f;     // Азимут (горизонтальный угол)
+    private float elevation = 0.0f;   // Склонение (вертикальный угол)
+    private float distance = 100.0f; // Расстояние от камеры до цели
 
     public Camera(
             final Vector3f position,
@@ -18,14 +30,6 @@ public class Camera {
         this.farPlane = farPlane;
     }
 
-    public void setPosition(final Vector3f position) {
-        this.position = position;
-    }
-
-    public void setTarget(final Vector3f target) {
-        this.target = target;
-    }
-
     public void setAspectRatio(final float aspectRatio) {
         this.aspectRatio = aspectRatio;
     }
@@ -34,16 +38,16 @@ public class Camera {
         return position;
     }
 
+    public void setPosition(final Vector3f position) {
+        this.position = position;
+    }
+
     public Vector3f getTarget() {
         return target;
     }
 
-    public void movePosition(final Vector3f translation) {
-        this.position.add(translation);
-    }
-
-    public void moveTarget(final Vector3f translation) {
-        this.target.add(target);
+    public void setTarget(final Vector3f target) {
+        this.target = target;
     }
 
     Matrix4f getViewMatrix() {
@@ -54,10 +58,45 @@ public class Camera {
         return GraphicConveyor.perspective(fov, aspectRatio, nearPlane, farPlane);
     }
 
-    private Vector3f position;
-    private Vector3f target;
-    private float fov;
-    private float aspectRatio;
-    private float nearPlane;
-    private float farPlane;
+    public float getAzimuth() {
+        return azimuth;
+    }
+
+    public void setAzimuth(float azimuth) {
+        this.azimuth = azimuth;
+        updatePositions();
+    }
+
+    public float getElevation() {
+        return elevation;
+    }
+
+    public void setElevation(float elevation) {
+        this.elevation = elevation;
+        updatePositions();
+    }
+
+    public float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(float distance) {
+        this.distance = distance;
+        updatePositions();
+    }
+
+    public void updatePosition() {
+        updatePositions();
+    }
+
+    private void updatePositions() {
+        double radAzimuth = Math.toRadians(azimuth);
+        double radElevation = Math.toRadians(elevation);
+
+        float x = (float) (distance * Math.cos(radElevation) * Math.sin(radAzimuth));
+        float y = (float) (distance * Math.sin(radElevation));
+        float z = (float) (distance * Math.cos(radElevation) * Math.cos(radAzimuth));
+
+        position = new Vector3f(x, y, z).sub(target);
+    }
 }

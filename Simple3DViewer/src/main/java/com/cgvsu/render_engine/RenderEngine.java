@@ -1,6 +1,5 @@
 package com.cgvsu.render_engine;
 
-import com.cgvsu.math.Matrix4f;
 import com.cgvsu.math.Vector2f;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.math.Vector4f;
@@ -9,7 +8,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 import java.util.ArrayList;
 
-import static com.cgvsu.render_engine.GraphicConveyor.*;
+import static com.cgvsu.render_engine.GraphicConveyor.calculateModelViewProjectionMatrix;
+import static com.cgvsu.render_engine.GraphicConveyor.vertexToPoint;
 
 public class RenderEngine {
 
@@ -20,7 +20,9 @@ public class RenderEngine {
             final double width,
             final double height) {
 
-
+        if (mesh == null) {
+            return;
+        }
         final int nPolygons = mesh.polygons.size();
         for (int polygonInd = 0; polygonInd < nPolygons; ++polygonInd) {
             final int nVerticesInPolygon = mesh.polygons.get(polygonInd).getVertexIndices().size();

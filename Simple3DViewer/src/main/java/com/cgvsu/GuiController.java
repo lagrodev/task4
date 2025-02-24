@@ -5,6 +5,7 @@ import com.cgvsu.math.Vector2f;
 import com.cgvsu.math.Vector3f;
 import com.cgvsu.math.Vector4f;
 import com.cgvsu.model.Model;
+import com.cgvsu.model.NormalCalculator;
 import com.cgvsu.model.Polygon;
 import com.cgvsu.objreader.ObjReader;
 import com.cgvsu.objwriter.ObjWriter;
@@ -17,6 +18,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -70,6 +73,9 @@ public class GuiController {
     private AnchorPane anchorPane;
     @FXML
     private AnchorPane anchorPaneForCanvas;
+    private boolean isLeftButtonPressed = false;
+    private boolean isRightButtonPressed = false;
+    private double lastMouseX, lastMouseY;
 
     private static ArrayList<Vector3f> getVector3fs(TransformationParameters params) {
         Vector3f rotation = new Vector3f((float) params.getAlpha(), (float) params.getBeta(), (float) params.getGamma());
@@ -102,9 +108,106 @@ public class GuiController {
                 mainRender(canvas.getGraphicsContext2D(), camera, mesh, width, height);
             }
         });
+        resetTransformationFields();
+
+        // для приколов с мышкой
+        canvas.setOnMousePressed(this::handleMousePressed);
+        canvas.setOnMouseReleased(this::handleMouseReleased);
+        canvas.setOnMouseDragged(this::handleMouseDragged);
+        canvas.setOnScroll(this::handleOnScroll);
 
         timeline.getKeyFrames().add(frame);
         timeline.play();
+    }
+
+    //поворот, используя елеватор и азимут (сферические координаты)
+    private void rotateCamera(double deltaX, double deltaY) {
+        float sensitivity = 0.5f;
+        float azimuth = camera.getAzimuth();
+        float elevation = camera.getElevation();
+
+        azimuth += (float) (deltaX * sensitivity);
+        elevation += (float) (deltaY * sensitivity);
+        // я пробовал через епсилон, но трабл: камеру начинает разворачивать и косожопить (скорее не камеру, а объект)... уааааааа -_-
+        elevation = Math.max(-89, Math.min(89, elevation)); // костыль... я не придумал, как от него уйти -_-
+        // как вариант можно смотреть на last mouse position, или вычитать их и тогда чет думать... но это звучит тяжело
+        // зачем думать... прыгать надо :) не, косоебит... хоть убей
+        azimuth = azimuth % 360;
+        if (azimuth < 0) azimuth += 360;
+
+        camera.setAzimuth(azimuth);
+        camera.setElevation(elevation);
+
+    }
+
+    private void panCamera(double deltaX, double deltaY) {
+        float panSensitivity = 0.05f;
+
+        Vector3f direction = camera.getTarget().sub(camera.getPosition());
+        direction.normalize();
+
+        Vector3f right = direction.cross(new Vector3f(0, 1, 0));
+        right.normalize();
+        right.multiply((float) deltaX * panSensitivity);
+
+        Vector3f up = new Vector3f(0, 1, 0);
+        up.multiply((float) deltaY * panSensitivity);
+
+        camera.setTarget(camera.getTarget().add(right).add(up));
+    }
+
+    private void handleOnScroll(ScrollEvent event) {
+        double delta = event.getDeltaY();
+        float zoomSensitivity = 0.1f;
+
+        float distance = camera.getDistance();
+        distance -= (float) (delta * zoomSensitivity);
+        distance = Math.max(10.0f, distance);
+        camera.setDistance(distance);
+    }
+
+    private void handleMouseReleased(MouseEvent event) {
+        if (!event.isPrimaryButtonDown()) {
+            isLeftButtonPressed = false;
+        }
+        if (!event.isSecondaryButtonDown()) {
+            isRightButtonPressed = false;
+        }
+    }
+
+    private void handleMousePressed(MouseEvent event) {
+        if (event.isPrimaryButtonDown()) {
+            isLeftButtonPressed = true;
+        }
+        if (event.isSecondaryButtonDown()) {
+            isRightButtonPressed = true;
+        }
+
+        lastMouseX = event.getX();
+        lastMouseY = event.getY();
+    }
+
+    private void handleMouseDragged(MouseEvent event) {
+        if (isLeftButtonPressed) {
+            double deltaX = event.getX() - lastMouseX;
+            double deltaY = event.getY() - lastMouseY;
+
+            panCamera(deltaX, deltaY);
+
+            lastMouseX = event.getX();
+            lastMouseY = event.getY();
+        }
+
+        if (isRightButtonPressed) {
+            double deltaX = event.getX() - lastMouseX;
+            double deltaY = event.getY() - lastMouseY;
+
+            rotateCamera(deltaX, deltaY);
+
+            lastMouseX = event.getX();
+            lastMouseY = event.getY();
+        }
+        render();
     }
 
     private FileChooser createFileChooser(String description, String extension, String title) {
@@ -212,29 +315,45 @@ public class GuiController {
         try {
             params = parseParameters();
             if (!getVector3fs(params).get(1).positiveVector()) {
-
                 return;
             }
         } catch (NumberFormatException e) {
-
             return;
         }
         recalculationOfNormals(getVector3fs(params));
+        resetTransformationFields();
+    }
+
+
+    private void resetTransformationFields() {
+        textFieldTranslationX.setText("0");
+        textFieldTranslationY.setText("0");
+        textFieldTranslationZ.setText("0");
+
+        textFieldScaleX.setText("1");
+        textFieldScaleY.setText("1");
+        textFieldScaleZ.setText("1");
+
+        textFieldRotationX.setText("0");
+        textFieldRotationY.setText("0");
+        textFieldRotationZ.setText("0");
     }
 
     private void recalculationOfNormals(ArrayList<Vector3f> list) {
         Matrix4f transformationMatrix = GraphicConveyor.translateRotateScale(list.get(2), list.get(0), list.get(1));
 
         ArrayList<Vector3f> transformedVertices = new ArrayList<>();
-        for (Vector3f vertex : mesh.getOriginalVertices()) {
-            Vector3f transformedVertex = transformationMatrix.multiply3(new Vector4f(vertex));
-            transformedVertices.add(transformedVertex);
+        if (mesh != null) {
+            for (Vector3f vertex : mesh.getOriginalVertices()) {
+                Vector3f transformedVertex = transformationMatrix.multiply3(new Vector4f(vertex));
+                transformedVertices.add(transformedVertex);
+            }
+
+            mesh.setVertices(transformedVertices);
+            mesh.setNormals(NormalCalculator.calculateNormals(mesh));
+
+            render();
         }
-
-        mesh.setVertices(transformedVertices);
-        mesh.setNormals(NormalCalculator.calculateNormals(mesh));
-
-        render();
     }
 
     public void saveModelFromFile() {
@@ -272,21 +391,21 @@ public class GuiController {
         if (initialDirectory.exists()) {
             fileChooser.setInitialDirectory(initialDirectory);
         }
-            fileChooser.setInitialFileName("Model" + ".obj");
-            File file = fileChooser.showSaveDialog(null);
+        fileChooser.setInitialFileName("Model" + ".obj");
+        File file = fileChooser.showSaveDialog(null);
 
-            if (file != null) {
-                ArrayList<Vector3f> vertices = useOriginalModel ? mesh.getOriginalVertices() : mesh.getVertices();
-                ArrayList<Polygon> polygons = mesh.getPolygons();
-                ArrayList<Vector2f> textureVertices =  mesh.getTextureVertices();
-                ArrayList<Vector3f> normals = mesh.getNormals();
-                objWriter.writeModelToObjFile(
-                        file.getAbsolutePath(),
-                        vertices,
-                        textureVertices,
-                        normals,
-                        polygons
-                );
-            }
+        if (file != null) {
+            ArrayList<Vector3f> vertices = useOriginalModel ? mesh.getOriginalVertices() : mesh.getVertices();
+            ArrayList<Polygon> polygons = mesh.getPolygons();
+            ArrayList<Vector2f> textureVertices = mesh.getTextureVertices();
+            ArrayList<Vector3f> normals = mesh.getNormals();
+            objWriter.writeModelToObjFile(
+                    file.getAbsolutePath(),
+                    vertices,
+                    textureVertices,
+                    normals,
+                    polygons
+            );
+        }
     }
 }
